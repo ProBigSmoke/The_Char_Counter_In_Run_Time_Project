@@ -1,8 +1,14 @@
 #  The_Char_Counter_In_Run_Time_Project_update_1
 This ReadME file includes all the changes in the project in update 1
 
-functions_for_get_input.cpp:
+functions_for_get_input.cpp changes:
 _classify some functions in three namespace based on their usage.
-_add add_char_in_users_input() function for initializing the chars for output string and counting the chars and used in get_input_with_char_counter.cpp file
-_add pop_char_in_users_input() function for pop backing the char for output string and counting the chars and used in get_input_with_char_counter.cpp file
-_add a new show_string_char_counter() function for maching the new features in line 145
+_add add_char_in_users_input() function for initializing the chars for output string and counting the chars and used in get_input_with_char_counter.cpp file.
+_add pop_char_in_users_input() function for pop backing the char for output string and counting the chars and used in get_input_with_char_counter.cpp file.
+_add a new show_string_char_counter() function for maching the new features in line 145.
+_add terminal_content_in_condition() for entering the chars in any lenght size without broking the texts visual.
+
+get_input_with_char_counter.cpp changes :
+_add some funtion like erasing_word_by_word_in_back_and_control_condition() ,  erasing_word_by_word_in_pipe_condition and data_changer() 
+for erasing the string word by word in any pipes coordinate.
+_some changes in get_input_from_user_funtion when you pressed enter it will get the pipe to next line instead of break in while loop (This part is not published yet ).
