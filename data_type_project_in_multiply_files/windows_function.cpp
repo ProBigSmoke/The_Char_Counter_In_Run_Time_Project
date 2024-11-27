@@ -1,4 +1,5 @@
 
+# include <iostream>
 # include <Windows.h>
 # include <vector>
 # include <string>
@@ -21,6 +22,13 @@ int terminals_lenght_in_run_time() {
 	return C_S_B_I.srWindow.Right - C_S_B_I.srWindow.Left + 1;
 }
 
+int terminals_width_in_run_time() {
+	HANDLE handle{ GetStdHandle(STD_OUTPUT_HANDLE) };
+	CONSOLE_SCREEN_BUFFER_INFO C_S_B_I;
+	GetConsoleScreenBufferInfo(handle, &C_S_B_I);
+
+	return C_S_B_I.dwSize.Y;
+}
 
 void saved_terminal_content(std::vector<std::string>& input_string ) {
 	HANDLE handle{ GetStdHandle(STD_OUTPUT_HANDLE)};
@@ -47,4 +55,50 @@ void saved_terminal_content(std::vector<std::string>& input_string ) {
 	}
 
 	delete[]buffer;
+}
+
+void fill_the_buffer(char char_to_fill , int x_coordinate , int y_coordinate , int char_number_to_fill_in_each_line) {
+	HANDLE consol_handle{ GetStdHandle(STD_OUTPUT_HANDLE) };
+
+	if (consol_handle == INVALID_HANDLE_VALUE) {
+		std::cout << "Error to get buffer handle " << '\n';
+	}
+
+	CONSOLE_SCREEN_BUFFER_INFO C_S_B_I;
+	
+	if (!GetConsoleScreenBufferInfo(consol_handle, &C_S_B_I)) {
+		std::cout << "Error to get buffer info " << '\n';
+	}
+
+	COORD coordinate;
+	DWORD chars_written;
+
+	coordinate.X = x_coordinate;
+	coordinate.Y = y_coordinate;
+	int lenght{ C_S_B_I.dwSize.X };
+
+	FillConsoleOutputCharacter(consol_handle, char_to_fill, lenght, coordinate, &chars_written);
+
+}
+
+
+void add_buffer_to_scroll() {
+	CONSOLE_SCREEN_BUFFER_INFO C_S_B_I;
+	HANDLE consol_handle{ GetStdHandle(STD_OUTPUT_HANDLE) };
+
+	if (!GetConsoleScreenBufferInfo(consol_handle, &C_S_B_I)) {
+		return;
+	}
+
+	COORD new_buffer_size;
+	new_buffer_size.X = C_S_B_I.dwSize.X;
+	new_buffer_size.Y = C_S_B_I.dwSize.Y + 1;
+
+	if (SetConsoleScreenBufferSize( consol_handle , new_buffer_size) ) {
+		return;
+	}
+
+	DWORD char_written;
+	COORD star_coord{ 0 , C_S_B_I.dwSize.Y };
+
 }
