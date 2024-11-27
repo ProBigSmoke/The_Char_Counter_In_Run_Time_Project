@@ -1,311 +1,308 @@
-﻿# include <iostream>
-# include <conio.h>
-# include <Windows.h>
-# include <thread>
+# include <iostream>
+# include <string>
 # include <vector>
+# include <conio.h>
+# include <thread>
+# include <cctype>
 # include <algorithm>
+# include <windows.h>
 # include "daclaration_for_get_input.hpp"
 # include "prototype_for_windows_file.hpp"
+# include "command_code_prototype.hpp"
 
 
-bool is_empty_line( std::string& string_from_vec ) {
-    
-	for (int counter{ 0 }; counter < string_from_vec.size(); ++counter) {
-		
-		if (string_from_vec[ counter ] != ' ' ) {
+bool is_all_space( std::string& output ) {
+     
+	for (int counter{ 0 }; counter < output.size(); ++counter) {
+
+		if (output[counter] != ' ') {
 			return false;
 		}
+	}
+
+
+	return true;
+}
+
+char the_first_char_position( std::string& output , int& first_char_position) {
+
+	for (int counter{ 0 }; counter < output.size(); ++counter) {
+		
+		if (output[counter] != ' ' ) {
+			first_char_position = counter;
+			
+			for (int nested_counter{ 0 }; nested_counter < first_char_position; ++nested_counter) {
+				output.erase(output.begin());
+			}
+
+			break;
+		}
+
+	}
+	
+
+	
+	return output[0];
+}
+
+void data_changer_in_run_time(int& x_value_position, int& y_value_position, unsigned long long& pipe_position_in_ouptut_str, unsigned long long& line_counter) {
+	--pipe_position_in_ouptut_str;
+	--x_value_position;
+	y_value_position -= ((x_value_position == 0) ? 1 : 0);
+	line_counter -= ((x_value_position == 0) ? 1 : 0);
+	x_value_position += ((x_value_position == 0) ? terminals_lenght_in_run_time() : 0);
+
+}
+
+void erasing_word_by_word_in_back_and_control_condition(std::string& output_str_type, const unsigned long long requst_size, int& cursor_x_position, int& cursor_y_position, unsigned long long& pipe_position_in_ouptut_str,
+	unsigned long long& line_counter , std::vector<unsigned long long>& terminal_lenght_coefficients) {
+
+
+	while (!output_str_type.empty() && output_str_type.back() == ' ') {
+		output_str_type.pop_back();
+		data_changer_in_run_time(cursor_x_position, cursor_y_position, pipe_position_in_ouptut_str, line_counter);
+	}
+
+	while (!output_str_type.empty() && output_str_type.back() != ' ') {
+		output_str_type.pop_back();
+		data_changer_in_run_time(cursor_x_position, cursor_y_position, pipe_position_in_ouptut_str, line_counter);
+	}
+
+	removed_the_std_output::erasing_the_terminal_content(requst_size);
+	change_xy(requst_size, 0);
+	std::cout << output_str_type;
+}
+
+void erasing_word_by_word_in_pipe_condition(std::string& output_str_type, const unsigned long long requst_size, int& cursor_x_position, int& cursor_y_position, unsigned long long pipe_position_in_ouptut_str , 
+	unsigned long long& current_pipe_position_output_size , unsigned long long& line_counter, std::vector<unsigned long long>& terminal_lenght_coefficients) {
+	
+
+	while ( !output_str_type.empty() && current_pipe_position_output_size != 0 && output_str_type[ current_pipe_position_output_size - 1 ] == ' ') {
+		output_str_type.erase(output_str_type.begin() + (current_pipe_position_output_size - 1));
+		data_changer_in_run_time(cursor_x_position, cursor_y_position, current_pipe_position_output_size, line_counter);
+	}
+	
+
+	
+	while (!output_str_type.empty() && current_pipe_position_output_size != 0 && output_str_type[current_pipe_position_output_size - 1] != ' ') {
+		output_str_type.erase(output_str_type.begin() + current_pipe_position_output_size);
+		data_changer_in_run_time(cursor_x_position, cursor_y_position, current_pipe_position_output_size, line_counter);
+	}
+	
+	removed_the_std_output::erasing_the_terminal_content(requst_size);
+	change_xy(requst_size, 0);
+	std::cout << output_str_type;
+
+
+}
+
+		
+std::string get_the_input_from_user(std::string progeramer_request) {
+	//std::cout << std::boolalpha;
+	std::string output{};
+	std::vector<unsigned long long> terminals_lenght_coefficients{};
+	const unsigned long long progeramer_request_str_size{ progeramer_request.size() };
+	unsigned long long pipe_position_size_of_the_output{ 0 };
+	unsigned long long line_counter{ 0 };
+	unsigned long long char_counter{};
+	int default_terminal_lenght{ terminals_lenght_in_run_time() };
+	int cursor_x_position_in_run_time{ static_cast<int>(progeramer_request_str_size) };
+	int cursor_y_position_in_run_time{};
+	bool is_user_anding_char_in_input{ false };
+	bool bool_type_for_erasing_onece{ false };
+	bool is_increasing{ false };
+	int first_alpha_char_in_output_string{ 0 };
+	std::cout << progeramer_request << '\n';
+	change_xy(progeramer_request_str_size, 0);
+
+	while (true) {
+
+		if (_kbhit()) {
+			auto get_the_input_in_ascii_code{ _getch() };
+			bool is_corrent_input_to_add_in_users{ (isdigit(get_the_input_in_ascii_code) || std::isalpha(get_the_input_in_ascii_code) || std::ispunct(get_the_input_in_ascii_code) || get_the_input_in_ascii_code == ' ')
+			&& get_the_input_in_ascii_code != '\b' && get_the_input_in_ascii_code != '\t' && !pipe_conditions::is_arrow_key() };
+
+			if (!pipe_conditions::is_arrow_key()) {
+
+				if (cursor_x_position_in_run_time != terminals_lenght_in_run_time()) {
+					add_char_in_users_input(is_user_anding_char_in_input, is_corrent_input_to_add_in_users, output, line_counter, static_cast<char>(get_the_input_in_ascii_code),
+						pipe_position_size_of_the_output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, terminals_lenght_coefficients, is_increasing);
+				}
+
+				if (cursor_x_position_in_run_time != 0) {
+					pop_char_in_users_input(is_user_anding_char_in_input, static_cast<char>(get_the_input_in_ascii_code) == '\b' && !output.empty(), output, progeramer_request_str_size, pipe_position_size_of_the_output,
+						cursor_x_position_in_run_time, cursor_y_position_in_run_time, line_counter, terminals_lenght_coefficients);
+				}
+
+				string_info_in_run_time::show_the_strings_char_value_2(output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, is_user_anding_char_in_input, terminals_lenght_coefficients);
+				change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
+
+
+				if (static_cast<char>(get_the_input_in_ascii_code) == '\r') {
+
+					/*
+					char first_outputs_char{ the_first_char_position(output, first_alpha_char_in_output_string) };
+
+					if (first_alpha_char_in_output_string == 0 && (first_outputs_char == ' ' || output.empty())) {
+						output.clear();
+						cursor_x_position_in_run_time = 0;
+						++cursor_y_position_in_run_time;
+						++line_counter;
+						string_info_in_run_time::erase_the_strings_char_counter(0, line_counter, char_counter);
+						change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
+					}
+                    
+					*/
+					//else {
+						break;
+					//}
+				}
+			}
+
+			pipe_conditions::show_pipe_position_in_arrow_key_condition_in_run_time(pipe_conditions::is_arrow_key(), pipe_position_size_of_the_output, get_the_input_in_ascii_code, output.size(),
+				cursor_x_position_in_run_time, cursor_y_position_in_run_time);
+		}
+
+		if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 ) {
+
+			if (output.size() == pipe_position_size_of_the_output) {
+				is_user_anding_char_in_input = false;
+				erasing_word_by_word_in_back_and_control_condition(output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, pipe_position_size_of_the_output,
+					line_counter, terminals_lenght_coefficients);
+
+				string_info_in_run_time::show_the_strings_char_value_2(output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, is_user_anding_char_in_input, terminals_lenght_coefficients);
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
+			}
+
+			else {
+				is_user_anding_char_in_input = false;
+				erasing_word_by_word_in_pipe_condition(output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, pipe_position_size_of_the_output,
+					pipe_position_size_of_the_output, line_counter, terminals_lenght_coefficients);
+
+				string_info_in_run_time::show_the_strings_char_value_2(output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, is_user_anding_char_in_input, terminals_lenght_coefficients);
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
+
+			}
+		}
+
+		terminal_content_in_condition(bool_type_for_erasing_onece, default_terminal_lenght, terminals_lenght_in_run_time(), cursor_x_position_in_run_time, cursor_y_position_in_run_time, line_counter,
+			pipe_position_size_of_the_output, progeramer_request_str_size, pipe_position_size_of_the_output, output, progeramer_request, terminals_lenght_coefficients);
+
+	}
+
+	change_xy(0, 10);
+
+	std::cout << "cursor x position : " << cursor_x_position_in_run_time << '\n';
+	std::cout << "cursor y position : " << cursor_y_position_in_run_time << '\n';
+
+	if (!terminals_lenght_coefficients.empty()) {
+		std::cout << '\n';
+		std::cout << '\n';
+
+		for (int counter{ 0 }; counter < terminals_lenght_coefficients.size(); ++ counter ) {
+			std::cout << terminals_lenght_coefficients[ counter ]<< '\t';
+		}
+
+	}
+
+
+//	change_xy(0, cursor_y_position_in_run_time + 2);
+
+	return output;
+}
+
+
+bool is_correct_color(std::string& input_from_user) {
+	input_from_user.erase(std::remove(input_from_user.begin(), input_from_user.end(), ' '), input_from_user.end());
+	std::transform(input_from_user.begin(), input_from_user.end(), input_from_user.begin(), std::tolower);
+	std::array<short, 4> array_of_one_and_zero{ return_to_bitset(input_from_user , map_str_to_bitset()) };
+
+	if ( array_of_one_and_zero[ 0 ] == -1 ) {
+		return false;
 	}
 
 	return true;
 }
 
-void terminals_empty_line_remover(std::vector<std::string>& terminal_content) {
-	int empty_line_counter{ 0 };
-
-	for (int counter{ 0 }; counter < terminal_content.size(); ++counter) {
-
-		if (is_empty_line(terminal_content[counter])) {
-			++empty_line_counter;
-		}
-	}
-
-	terminal_content.resize(terminal_content.size() - (empty_line_counter ));
-
-
-}
-
-
-void erase_the_empty_chars(std::vector<std::string>& input_terminal_content ) {
-
-	for (int counter{ 0 }; counter < input_terminal_content.size(); ++counter) {
-		int empty_char_counter{ 0 };
-        
-		for (int nested_counter{ 0 }; nested_counter < input_terminal_content[counter].size(); ++nested_counter) {
-
-			if (input_terminal_content[ counter ][ nested_counter ] == ' ' ) {
-				++empty_char_counter;
-			}
-
-			else {
-				empty_char_counter = 0;
-			}
-
-		}
-
-		input_terminal_content[counter].resize(input_terminal_content[counter].size() - empty_char_counter);
-	}
-}
-
-
-void erase_the_output_in_consol(std::vector<std::string>& input_consol_content, unsigned long long progeramer_requst_size) {
-	saved_terminal_content(input_consol_content);
-
-	for (int counter{ 0 }; counter < progeramer_requst_size; ++counter) {
-		input_consol_content[0].erase(input_consol_content[counter].begin());
-	}
-
-	terminals_empty_line_remover(input_consol_content);
-	erase_the_empty_chars(input_consol_content);
-
-	change_xy(0, 10);
-
-	for (int counter{ 0 }; counter < input_consol_content.size(); ++counter) {
-		std::cout << input_consol_content[counter] << '\n';
-
-	}
-
-	std::cout << '\n';
-	std::cout << "Size of the terminal : " << input_consol_content.size() << '\n';
-
-	std::cout << '\n';
-	std::cout << '\n';
-
-	for (int counter{ 0 }; counter < input_consol_content.size(); ++counter) {
-		std::cout << input_consol_content[counter].size() << '\n';
-	}
-
-
-}
-
-void back_space_in_pipe_position_condition(int& users_input_in_ascii_code, unsigned long long progeramer_requst_size, unsigned long long& pipe_position_in_output_size, int& cursor_x_position,
-	int& cursor_y_position, unsigned long long& char_counter_value, unsigned long long& line_counter, std::string& output , bool&is_pipe_condition_true) {
-
-	if (users_input_in_ascii_code == 8 && pipe_position_in_output_size != output.size() && pipe_position_in_output_size != 0) {
-		
-		if (!is_pipe_condition_true) {
-			is_pipe_condition_true = true;
-			erase_the_strings_char_counter(0, line_counter + 1, char_counter_value);
-		}
-		
-		--cursor_x_position;
-		--pipe_position_in_output_size;
-		cursor_y_position -= ((cursor_x_position == 0) ? 1 : 0);
-		cursor_x_position += ((cursor_x_position == 0) ? terminals_lenght_in_run_time() : 0);
-		output.erase(output.begin() + pipe_position_in_output_size);
-		std::vector<std::string> terminal_content{};
-		erase_the_output_in_consol(terminal_content, progeramer_requst_size);
-		
-		change_xy(cursor_x_position, cursor_y_position);
-	}
-
-
-}
-
-void get_input_from_user(std::string programer_request ) {
-	std::cout << programer_request;
-	static std::string output{};
-	std::vector<std::string> vec_full_terminal_line_in_run_time{};
-	std::string str_of_terminal_content_in_end_of_the_line {};
-	static int cursor_x_position_in_run_time{ static_cast<int>( programer_request.size() ) };
-	static int cursor_y_position_in_run_time{ 0 };
-	unsigned long long output_size_for_pipe_position_in_run_time{};
-	unsigned long long pipe_position_in_size_of_the_output{ 0 };
-    unsigned long long char_counter{ 0 };
-	bool is_back_space_key_pressed_in_run_time{ false };
-	bool is_pipe_condition_true{ false };
-	int test_value{ 0 };
-	bool is_arrow_key_pressed_in_run_time{false};
-    unsigned long long line_counter{ 0 };
+std::string getting_input_with_char_counter(std::string progeramer_requst, std::string error_text ) {
+	const unsigned long long requst_size{ progeramer_requst.size() };
+	std::string final_output{};
 
 	while (true) {
-    
-		if (_kbhit()) {;
-			auto get_the_char_input_from_key_board_instently{ _getch() };
-		    
-			if (!is_arrow_key()) {
+		auto output_str{ get_the_input_from_user(progeramer_requst) };
 
-				if ((isdigit(get_the_char_input_from_key_board_instently) || std::isalpha(get_the_char_input_from_key_board_instently) || std::ispunct(get_the_char_input_from_key_board_instently) || get_the_char_input_from_key_board_instently == ' ') && get_the_char_input_from_key_board_instently != '\b'
-					&& get_the_char_input_from_key_board_instently != '\t' && !is_arrow_key() && cursor_x_position_in_run_time != terminals_lenght_in_run_time() ) {
-					is_pipe_condition_true = false;
-					str_of_terminal_content_in_end_of_the_line.push_back(static_cast<char>(get_the_char_input_from_key_board_instently));
-					change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-					std::cout << static_cast<char>(get_the_char_input_from_key_board_instently);
-					++cursor_x_position_in_run_time;
-					++char_counter;
-					++pipe_position_in_size_of_the_output;
-				    show_the_char_counter(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
+		if (is_corect_for_command_code(output_str)) {
+			std::vector<std::string> terminal_content{};
+			saved_terminal_content(terminal_content);
+			removed_the_std_output::terminals_empty_line_remover(terminal_content);
+		
+			change_xy(0 , 10);
 
-					if (cursor_x_position_in_run_time == terminals_lenght_in_run_time()) {
-						vec_full_terminal_line_in_run_time.push_back(str_of_terminal_content_in_end_of_the_line);
-						str_of_terminal_content_in_end_of_the_line.clear();
+			for (int counter{ 0 }; counter < terminal_content.size(); ++counter) {
+				std::cout << terminal_content[counter] << '\n';
+			}
+
+			std::cout << '\n';
+			std::cout << '\n';
+
+			std::cout << terminal_content.size() << '\n';
+
+			while (true) {
+				//get_the_input_from_user("Enter your command : ");
+
+				break;
+			}
+		}
+		
+
+		bool condition{ true };
+
+		if (condition) {
+			final_output = output_str;
+			std::string empty_chars{};
+			auto buffer_lines{ ((output_str.size() + requst_size) / terminals_lenght_in_run_time()) + 1 };
+
+			for (int counter{ 0 }; counter < (terminals_lenght_in_run_time() * (buffer_lines + 3)) - requst_size; ++counter) {
+				empty_chars.push_back(' ');
+			}
+
+			change_xy(0, 0);
+			std::cout << empty_chars;
+			change_xy(0, 0);
+			return final_output;
+		}
+
+		else {
+			auto buffer_lines{ ((output_str.size() + requst_size) / terminals_lenght_in_run_time()) + 1 };
+			change_xy(0, buffer_lines + 2);
+			std::cout << error_text;
+			change_xy(requst_size, 0);
+
+			while (true) {
+
+				if (_kbhit()) {
+					std::string empty_chars{};
+
+					for (int counter{ 0 }; counter < (terminals_lenght_in_run_time() * (buffer_lines + 3)) - requst_size; ++counter) {
+						empty_chars.push_back(' ');
 					}
 
-					show_char_counter_value(char_counter, cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-					change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-					line_counter += ((cursor_x_position_in_run_time == terminals_lenght_in_run_time()) ? 1 : 0);
-					cursor_y_position_in_run_time += ((cursor_x_position_in_run_time == terminals_lenght_in_run_time()) ? 1 : 0);
-					erase_the_str_of_char_counter_in_run_time(cursor_x_position_in_run_time, cursor_y_position_in_run_time, char_counter, is_back_space_key_pressed_in_run_time);
-					cursor_x_position_in_run_time -= ((cursor_x_position_in_run_time == terminals_lenght_in_run_time()) ? terminals_lenght_in_run_time() : 0);
-					output.push_back(static_cast<char>(get_the_char_input_from_key_board_instently));
-					output_size_for_pipe_position_in_run_time = output.size();
-				}
+					change_xy(requst_size, 0);
+					std::cout << empty_chars;
 
-				else if (get_the_char_input_from_key_board_instently == '\b' && !output.empty() && cursor_x_position_in_run_time <= terminals_lenght_in_run_time() && pipe_position_in_size_of_the_output != 0 && pipe_position_in_size_of_the_output == output.size()) {
-					is_pipe_condition_true = false;
-					is_back_space_key_pressed_in_run_time = true;
-					std::cout << "\b \b";
-					--cursor_x_position_in_run_time;
-					--char_counter;
-					--pipe_position_in_size_of_the_output;
-					line_counter -= ((cursor_x_position_in_run_time == 0) ? 1 : 0);
-					show_the_char_counter(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-
-					if (cursor_x_position_in_run_time == terminals_lenght_in_run_time() - 1) {
-						change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-						std::cout << ' ';
-					}
-					
-					change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-					show_char_counter_value(char_counter, cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-					change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-					cursor_y_position_in_run_time -= ((cursor_x_position_in_run_time == 0) ? 1 : 0);
-					erase_the_str_of_char_counter_in_run_time(cursor_x_position_in_run_time, cursor_y_position_in_run_time, char_counter, is_back_space_key_pressed_in_run_time);
-					cursor_x_position_in_run_time += ((cursor_x_position_in_run_time == 0) ? terminals_lenght_in_run_time() : 0);
-					output.pop_back();
-					output_size_for_pipe_position_in_run_time = output.size();
-					is_back_space_key_pressed_in_run_time = false;
-
-				}
-
-				else if (get_the_char_input_from_key_board_instently == '\r') {
 					break;
 				}
 			}
 
-			/*
-			back_space_in_pipe_position_condition(get_the_char_input_from_key_board_instently, programer_request.size(), pipe_position_in_size_of_the_output,
-				cursor_x_position_in_run_time, cursor_y_position_in_run_time, char_counter, line_counter, output, is_pipe_condition_true);
-			*/
-
-			
-			
-			if (pipe_position_in_size_of_the_output != output.size() && pipe_position_in_size_of_the_output != 0 && get_the_char_input_from_key_board_instently == 8) {
-
-				if (!is_pipe_condition_true) {
-					is_pipe_condition_true = true;
-					erase_the_strings_char_counter(0, line_counter + 1, char_counter);
-				}
-
-				
-				std::vector<std::string> vec_of_terminal_content{};
-				--cursor_x_position_in_run_time;
-				--pipe_position_in_size_of_the_output;
-				--char_counter;
-				cursor_y_position_in_run_time -= ((cursor_x_position_in_run_time == 0) ? 1 : 0);
-				cursor_x_position_in_run_time += ((cursor_x_position_in_run_time == 0) ? terminals_lenght_in_run_time() : 0);
-				output.erase(output.begin() + pipe_position_in_size_of_the_output );
-				saved_terminal_content(vec_of_terminal_content);
-				terminals_empty_line_remover(vec_of_terminal_content );
-
-				for (int counter{ 0 }; counter < programer_request.size(); ++counter) {
-					vec_of_terminal_content[0].erase(vec_of_terminal_content[0].begin());
-				}
-
-				erase_the_empty_chars(vec_of_terminal_content);
-
-				for (int counter{ 0 }; counter < vec_of_terminal_content.size(); ++counter) {
-					std::fill(vec_of_terminal_content[counter].begin(), vec_of_terminal_content[counter].end(), ' ');
-				}
-
-
-				change_xy(programer_request.size(), 0);
-
-				for (int counter{ 0 }; counter < vec_of_terminal_content.size(); ++counter) {
-					std::cout << vec_of_terminal_content[counter]; 
-				}
-
-				change_xy(programer_request.size(), 0);
-				std::cout << output;
-
-				line_counter -= (((output.size() + programer_request.size()) % terminals_lenght_in_run_time() == 0) ? 1 : 0);
-				change_xy(0, line_counter + 1);
-				std::cout << "Strings char counter : ";
-				show_char_counter_value(char_counter, cursor_x_position_in_run_time, line_counter);
-
-				if ((output.size() + programer_request.size()) % terminals_lenght_in_run_time() == 0) {
-					change_xy(0, line_counter + 2);
-                    
-					for (int counter{ 0 }; counter < 24 + std::to_string(char_counter).size(); ++counter) {
-						std::cout << ' ';
-					}
-
-				}
-
-				change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-			}
-			
-
-			if (is_arrow_key()) {
-				is_arrow_key_pressed_in_run_time = true;
-
-				if (get_the_char_input_from_key_board_instently == 75 && pipe_position_in_size_of_the_output != 0 ) {
-					--pipe_position_in_size_of_the_output;
-					--cursor_x_position_in_run_time;
-					cursor_y_position_in_run_time -= ((cursor_x_position_in_run_time == 0 ) ? 1 : 0);
-					cursor_x_position_in_run_time += ((cursor_x_position_in_run_time == 0 )? terminals_lenght_in_run_time() : 0);
-					change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-				}
-
-				else if (get_the_char_input_from_key_board_instently == 77 && pipe_position_in_size_of_the_output != output.size() ) {
-					++pipe_position_in_size_of_the_output;
-					++cursor_x_position_in_run_time;
-					cursor_y_position_in_run_time += ((cursor_x_position_in_run_time == terminals_lenght_in_run_time() )? 1 : 0 );
-					cursor_x_position_in_run_time -= ((cursor_x_position_in_run_time == terminals_lenght_in_run_time()) ? terminals_lenght_in_run_time() : 0);
-					change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
-				}
-			}   
-
-			
-
-
-
+			output_str.clear();
+			change_xy(0, 0);
 		}
+
 	}
 
-	change_xy(0, 20);
-    
-	/*
-	std::cout << "output char size : " << output.size() << '\n';
-	std::cout << "pipe l : " << output_size_for_pipe_position_in_run_time << '\n';
-	std::cout << "x : " << cursor_x_position_in_run_time << '\n';
-	std::cout << "y : " << cursor_y_position_in_run_time << '\n';
-	*/
-//	std::cout << "ascii : " << ge << '\n';
-
-
-	/*
-
-	std::cout << "pipe position in output size : " << pipe_position_in_size_of_the_output << '\n';
-	std::cout << "output size : " << output.size() << '\n';
-	std::cout << "Line counter : " << line_counter << '\n';
-	std::cout << "cursor x position : " << cursor_x_position_in_run_time << '\n';
-	std::cout << "cursor y position : " << cursor_y_position_in_run_time << '\n';
-    
-	*/
-
-	std::cout <<"output : " << output << '\n';
-
+	return final_output;
 }
 
-//# endif
+	
