@@ -186,9 +186,9 @@ std::string get_the_input_from_user(std::string progeramer_request) {
 			else {
 				is_user_anding_char_in_input = false;
 				erasing_word_by_word_in_pipe_condition(output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, pipe_position_size_of_the_output,
-					pipe_position_size_of_the_output, line_counter, terminals_lenght_coefficients);
+					pipe_position_size_of_the_output, line_counter);
 
-				string_info_in_run_time::show_the_strings_char_value_2(output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, is_user_anding_char_in_input, terminals_lenght_coefficients);
+				string_info_in_run_time::show_the_strings_char_value_2(output, progeramer_request_str_size, cursor_x_position_in_run_time, cursor_y_position_in_run_time, is_user_anding_char_in_input);
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				change_xy(cursor_x_position_in_run_time, cursor_y_position_in_run_time);
 
