@@ -55,7 +55,7 @@ void data_changer_in_run_time(int& x_value_position, int& y_value_position, unsi
 }
 
 void erasing_word_by_word_in_back_and_control_condition(std::string& output_str_type, const unsigned long long requst_size, int& cursor_x_position, int& cursor_y_position, unsigned long long& pipe_position_in_ouptut_str,
-	unsigned long long& line_counter , std::vector<unsigned long long>& terminal_lenght_coefficients) {
+	unsigned long long& line_counter ) {
 
 
 	while (!output_str_type.empty() && output_str_type.back() == ' ') {
@@ -74,7 +74,7 @@ void erasing_word_by_word_in_back_and_control_condition(std::string& output_str_
 }
 
 void erasing_word_by_word_in_pipe_condition(std::string& output_str_type, const unsigned long long requst_size, int& cursor_x_position, int& cursor_y_position,
-	unsigned long long& current_pipe_position_output_size, unsigned long long& line_counter, std::vector<unsigned long long>& terminal_lenght_coefficients) {
+	unsigned long long& current_pipe_position_output_size, unsigned long long& line_counter) {
 	std::string string_chars_after_pipe_position{};
 	auto output_str_size{ output_str_type.size() };
 
